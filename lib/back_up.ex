@@ -1,11 +1,5 @@
 defmodule BackUp do
   alias BackUp.AppState
-
-  def test do
-    BackUp.set_start_folder("/home/neil/stuff")
-    BackUp.set_backup_folder("/home/neil/test_backup")
-    BackUp.start
-  end
   
   def start() do
     folder_dir_state = AppState.get_state()
