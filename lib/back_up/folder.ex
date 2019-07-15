@@ -88,22 +88,24 @@ defmodule BackUp.Folder do
   defp copy_files(state) do
     unless state.files == [] do
       Enum.each(state.files, fn(file_path) ->
-	dst_path = String.replace(
-	  file_path,
-	  state.start_folder,
-	  state.backup_folder
-        )
-	
-	case File.cp(file_path, dst_path, &cp_file/2) do
-	  :ok ->
-	    IO.puts("Backed up #{file_path} to #{dst_path}")
-	  {:error, reason} ->
-	    msg = """
-	    Msg: Error backing up file #{file_path} to #{dst_path}
-	    Reason: #{inspect reason}
+	Task.start(fn ->
+	  dst_path = String.replace(
+	    file_path,
+	    state.start_folder,
+	    state.backup_folder
+          )
+	  
+	  case File.cp(file_path, dst_path, &cp_file/2) do
+	    :ok ->
+	      IO.puts("Backed up #{file_path} to #{dst_path}")
+	    {:error, reason} ->
+	      msg = """
+	      Msg: Error backing up file #{file_path} to #{dst_path}
+	      Reason: #{inspect reason}
 	    """
-	    IO.puts(msg)
-	end
+	      IO.puts(msg)
+	  end
+	end)
       end)
     else
       IO.puts("No files to back up from #{state.current_folder}")
