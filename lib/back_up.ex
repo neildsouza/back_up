@@ -7,7 +7,7 @@ defmodule BackUp do
       folder_dir_state.start_folder == "" ->
 	IO.puts("Please set the start folder")
       folder_dir_state.backup_folder == "" ->
-	IO.puts("Please set the backup folders")
+	IO.puts("Please set the backup folder")
       true ->
 	IO.puts("Here goes nothing ...")
 	{:ok, pid} = DynamicSupervisor.start_child(
