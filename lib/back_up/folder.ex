@@ -117,8 +117,11 @@ defmodule BackUp.Folder do
     dst_hash_task = Task.async(fn ->
       Filesystem.hash_content(dst_file)
     end)
+
+    src_hash = Task.await(src_hash_task, :infinity)
+    dst_hash = Task.await(dst_hash_task, :infinity)
     
-    unless Task.await(src_hash_task) == Task.await(dst_hash_task) do
+    unless src_hash  == dst_hash do
       true
     else
       false
