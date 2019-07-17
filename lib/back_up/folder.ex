@@ -87,6 +87,7 @@ defmodule BackUp.Folder do
 
   defp copy_files(state) do
     unless state.files == [] do
+      IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
       Enum.each(state.files, fn(file_path) ->
 	Task.start(fn ->
 	  dst_path = String.replace(
@@ -94,21 +95,34 @@ defmodule BackUp.Folder do
 	    state.start_folder,
 	    state.backup_folder
           )
-	  
-	  case File.cp(file_path, dst_path, &cp_file/2) do
-	    :ok ->
-	      IO.puts("Backed up #{file_path} to #{dst_path}")
-	    {:error, reason} ->
-	      msg = """
-	      Msg: Error backing up file #{file_path} to #{dst_path}
-	      Reason: #{inspect reason}
-	    """
-	      IO.puts(msg)
+
+	  if File.exists?(dst_path) do
+	    case File.cp(file_path, dst_path, &cp_file/2) do
+	      :ok ->
+		:ok
+	      {:error, reason} ->
+		msg = """
+		Msg: Error backing up file #{file_path} to #{dst_path}
+		Reason: #{inspect reason}
+		"""	
+		IO.puts(msg)
+	    end
+	  else
+	    case File.cp(file_path, dst_path) do
+	      :ok ->
+		IO.puts("#{file_path} --> #{dst_path}")
+	      {:error, reason} ->
+		msg = """
+		Msg: Error backing up file #{file_path} to #{dst_path}
+		Reason: #{inspect reason}
+		"""
+		IO.puts(msg)
+	    end
 	  end
 	end)
       end)
     else
-      IO.puts("No files to back up from #{state.current_folder}")
+      IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
     end
   end
 
@@ -116,14 +130,20 @@ defmodule BackUp.Folder do
     src_hash_task = Task.async(fn ->
       Filesystem.hash_content(src_file)
     end)
-    dst_hash_task = Task.async(fn ->
-      Filesystem.hash_content(dst_file)
-    end)
+
+    dst_hash_task = if File.exists?(dst_file) do
+      Task.async(fn ->
+	Filesystem.hash_content(dst_file)
+      end)
+    else
+      ""
+    end
 
     src_hash = Task.await(src_hash_task, :infinity)
     dst_hash = Task.await(dst_hash_task, :infinity)
     
     unless src_hash  == dst_hash do
+      IO.puts("#{src_file} --> #{dst_file}")
       true
     else
       false

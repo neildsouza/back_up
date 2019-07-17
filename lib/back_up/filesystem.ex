@@ -40,15 +40,11 @@ defmodule BackUp.Filesystem do
   end
   
   def hash_content(content) do
-    if File.exists?(content) do
-      File.stream!(content,[],2048) 
-      |> Enum.reduce(:crypto.hash_init(:sha256), fn(line, acc) ->
-           :crypto.hash_update(acc,line)
-         end)
-       |> :crypto.hash_final 
-       |> Base.encode16
-    else
-      ""
-    end
+    File.stream!(content,[],2048) 
+    |> Enum.reduce(:crypto.hash_init(:sha256), fn(line, acc) ->
+         :crypto.hash_update(acc,line)
+       end)
+    |> :crypto.hash_final 
+    |> Base.encode16
   end
 end
