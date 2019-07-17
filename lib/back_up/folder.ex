@@ -129,7 +129,7 @@ defmodule BackUp.Folder do
   defp cp_file(src_file, dst_file) do
     src_hash_task = Task.async(fn ->
       Filesystem.hash_content(src_file)
-    end
+    end)
 
     dst_hash_task = Task.async(fn ->
       Filesystem.hash_content(dst_file)
