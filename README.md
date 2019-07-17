@@ -1,6 +1,6 @@
 # BackUp
 
-**Elixir Application to back up files & folders**
+**Steps to run the app**
 
 
 ```elixir
