@@ -131,13 +131,9 @@ defmodule BackUp.Folder do
       Filesystem.hash_content(src_file)
     end)
 
-    dst_hash_task = if File.exists?(dst_file) do
-      Task.async(fn ->
-	Filesystem.hash_content(dst_file)
-      end)
-    else
-      ""
-    end
+    dst_hash_task = Task.async(fn ->
+      Filesystem.hash_content(dst_file)
+    end)
 
     src_hash = Task.await(src_hash_task, :infinity)
     dst_hash = Task.await(dst_hash_task, :infinity)

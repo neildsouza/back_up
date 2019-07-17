@@ -1,6 +1,4 @@
 defmodule BackUp.Filesystem do
-  @back_up_file ".back_up_config.json"
-  
   def crawl_folder(folder) do
     get_folder_contents(folder)
     |> create_paths()
@@ -18,7 +16,7 @@ defmodule BackUp.Filesystem do
 
   defp get_folder_contents(folder) do
     case File.ls(folder) do
-      {:ok, contents} -> {:ok, folder, contents -- [@back_up_file]}
+      {:ok, contents} -> {:ok, folder, contents}
       {:error, e} -> IO.inspect(e)
     end
   end
