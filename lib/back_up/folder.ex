@@ -157,7 +157,8 @@ defmodule BackUp.Folder do
   defp create_folder(dst_folder) do
     unless File.exists?(dst_folder) do
       case File.mkdir_p(dst_folder) do
-	:ok -> "Created folder #{dst_folder}"
+	:ok ->
+	  IO.puts("Created folder #{dst_folder}")
 	{:error, reason} ->
 	  msg = """
 	    Msg: Cannot create directory #{dst_folder}
