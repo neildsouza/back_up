@@ -26,7 +26,7 @@ iex(4)> BackUp.set_backup_folder "/home/neil/test_folder_3"
    "/home/neil/test_folder_3"],
   start_folder: "/home/neil/stuff"
 }
-iex(5)>
+iex(5)> Backup.start()
 ```
 
 
