@@ -25,21 +25,23 @@ defmodule BackUp.Folder do
   end
 
   def init(state) do
-    folder_dir_state = AppState.get_state()
-    start_folder = folder_dir_state.start_folder
-    backup_folder = folder_dir_state.backup_folder
+    app_state = AppState.get_state()
+    start_folder = app_state.start_folder
+    backup_folders = app_state.backup_folders
 
-    dst_folder = String.replace(
-      state.current_folder,
-      start_folder,
-      backup_folder
-    )
+    backup_dst_folders = Enum.reduce(backup_folders, [], fn(backup_folder, acc) ->
+      dst = String.replace(
+	state.current_folder,
+	start_folder,
+	backup_folder
+      )
+      acc ++ [%{backup_folder: backup_folder, dst_folder: dst}]
+    end)
 
     state =
       state
       |> Map.put(:start_folder, start_folder)
-      |> Map.put(:backup_folder, backup_folder)
-      |> Map.put(:dst_folder, dst_folder)
+      |> Map.put(:backup_dst_folders, backup_dst_folders)
     
     # IO.inspect(state)
     
@@ -51,7 +53,10 @@ defmodule BackUp.Folder do
   end
 
   def handle_cast(:cp, state) do
-    create_folder(state.dst_folder)
+    Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
+      create_folder(backup_dst_folder.dst_folder)
+    end)
+    
     copy_files(state)
     
     {:stop, :shutdown, state}
@@ -89,36 +94,38 @@ defmodule BackUp.Folder do
     unless state.files == [] do
       IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
       Enum.each(state.files, fn(file_path) ->
-	Task.start(fn ->
-	  dst_path = String.replace(
-	    file_path,
-	    state.start_folder,
-	    state.backup_folder
-          )
+	Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
+	  Task.start(fn ->
+	    dst_path = String.replace(
+	      file_path,
+	      state.start_folder,
+	      backup_dst_folder.backup_folder
+            )
 
-	  if File.exists?(dst_path) do
-	    case File.cp(file_path, dst_path, &cp_file/2) do
-	      :ok ->
-		:ok
-	      {:error, reason} ->
-		msg = """
-		Msg: Error backing up file #{file_path} to #{dst_path}
-		Reason: #{inspect reason}
+	    if File.exists?(dst_path) do
+	      case File.cp(file_path, dst_path, &cp_file/2) do
+		:ok ->
+		  :ok
+		{:error, reason} ->
+		  msg = """
+		  Msg: Error backing up file #{file_path} to #{dst_path}
+		  Reason: #{inspect reason}
 		"""	
-		IO.puts(msg)
-	    end
-	  else
-	    case File.cp(file_path, dst_path) do
-	      :ok ->
-		IO.puts("#{file_path} --> #{dst_path}")
-	      {:error, reason} ->
-		msg = """
-		Msg: Error backing up file #{file_path} to #{dst_path}
-		Reason: #{inspect reason}
+		  IO.puts(msg)
+	      end
+	    else
+	      case File.cp(file_path, dst_path) do
+		:ok ->
+		  IO.puts("#{file_path} --> #{dst_path}")
+		{:error, reason} ->
+		  msg = """
+		  Msg: Error backing up file #{file_path} to #{dst_path}
+		  Reason: #{inspect reason}
 		"""
-		IO.puts(msg)
+		  IO.puts(msg)
+	      end
 	    end
-	  end
+	  end)
 	end)
       end)
     else

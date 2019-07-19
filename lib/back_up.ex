@@ -1,12 +1,24 @@
 defmodule BackUp do
   alias BackUp.AppState
+
+  def remove_all_backup_folders() do
+    AppState.remove_all_backup_folders()
+  end
+  
+  def remove_backup_folder(folder) do
+    AppState.remove_backup_folder(folder)
+  end
+  
+  def reset() do
+    AppState.reset_state()
+  end
   
   def start() do
-    folder_dir_state = AppState.get_state()
+    app_state = AppState.get_state()
     cond do
-      folder_dir_state.start_folder == "" ->
+      app_state.start_folder == "" ->
 	IO.puts("Please set the start folder")
-      folder_dir_state.backup_folder == "" ->
+      app_state.backup_folders == [] ->
 	IO.puts("Please set the backup folder")
       true ->
 	IO.puts("Here goes nothing ...")
@@ -15,7 +27,7 @@ defmodule BackUp do
 	  {
 	    BackUp.Folder,
 	    %{
-	      current_folder: folder_dir_state.start_folder
+	      current_folder: app_state.start_folder
 	    }
 	  }
 	)
