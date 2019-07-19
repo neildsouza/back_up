@@ -105,23 +105,24 @@ defmodule BackUp.Folder do
 	    if File.exists?(dst_path) do
 	      case File.cp(file_path, dst_path, &cp_file/2) do
 		:ok ->
-		  :ok
+		  write_file_stats(file_path, dst_path)
 		{:error, reason} ->
 		  msg = """
-		  Msg: Error backing up file #{file_path} to #{dst_path}
+		     Msg: Error backing up file #{file_path} to #{dst_path}
 		  Reason: #{inspect reason}
-		"""	
+		  """	
 		  IO.puts(msg)
 	      end
 	    else
 	      case File.cp(file_path, dst_path) do
 		:ok ->
+		  write_file_stats(file_path, dst_path)
 		  IO.puts("#{file_path} --> #{dst_path}")
 		{:error, reason} ->
 		  msg = """
-		  Msg: Error backing up file #{file_path} to #{dst_path}
+		     Msg: Error backing up file #{file_path} to #{dst_path}
 		  Reason: #{inspect reason}
-		"""
+		  """
 		  IO.puts(msg)
 	      end
 	    end
@@ -165,5 +166,10 @@ defmodule BackUp.Folder do
 	  IO.puts(msg)
       end
     end
+  end
+
+  defp write_file_stats(file_path, dst_path) do
+    file_path_stat = File.stat!(file_path, time: :posix)
+    File.write_stat(dst_path, file_path_stat, time: :posix)
   end
 end
