@@ -1,5 +1,5 @@
 defmodule BackUp.FileCopyProc do
-  use GenServer, restart: :temporary
+  use GenServer, restart: :transient
 
   alias BackUp.Filesystem
 
