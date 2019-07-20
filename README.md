@@ -1,6 +1,7 @@
 # BackUp
 
 **Steps to run the app**
+Will print "All done" when finsihed backing up.
 
 
 ```elixir
