@@ -1,5 +1,7 @@
 defmodule BackUp.TallyProc do
-  use GenServer, restart: :temporary
+  use GenServer
+
+  @poll_time (1000 * 60)
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -14,7 +16,7 @@ defmodule BackUp.TallyProc do
   end
 
   def handle_cast(:get_pending, state) do
-    Process.send_after(__MODULE__, :pending, 5000)
+    Process.send_after(__MODULE__, :pending, @poll_time)
     {:noreply, state}
   end
 
@@ -25,11 +27,13 @@ defmodule BackUp.TallyProc do
 
     if active > 0 do
       IO.puts("Files & folders pending: #{active}")
-      Process.send_after(__MODULE__, :pending, 5000)
-      {:noreply, state}
+      Process.send_after(__MODULE__, :pending, @poll_time)
     else
-      IO.puts("All done")
-      {:stop, :shutdown, state}
+      IO.puts("\n====================================")
+      IO.puts("             All done               ")
+      IO.puts("====================================")
     end
+    
+    {:noreply, state}
   end
 end

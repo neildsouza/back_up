@@ -81,7 +81,7 @@ defmodule BackUp.Folder do
       end)
     end
 
-    IO.inspect(state)
+    # IO.inspect(state)
 
     cp(self())
     

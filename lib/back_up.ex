@@ -39,7 +39,6 @@ defmodule BackUp do
 	  }
 	)
 	BackUp.Folder.crawl_folder(pid)
-	BackUp.TallyProc.start_link(:ok)
 	BackUp.TallyProc.get_pending()
     end
   end

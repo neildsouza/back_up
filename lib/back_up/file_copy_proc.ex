@@ -1,5 +1,5 @@
 defmodule BackUp.FileCopyProc do
-  use GenServer
+  use GenServer, restart: :temporary
 
   alias BackUp.Filesystem
 
@@ -21,8 +21,6 @@ defmodule BackUp.FileCopyProc do
       state.start_folder,
       state.backup_folder
     )
-    IO.puts "Src: " <> state.src_file
-    IO.puts "Dst: " <> dst_path
 
     if File.exists?(dst_path) do
       case File.cp(state.src_file, dst_path, &cp_file/2) do
