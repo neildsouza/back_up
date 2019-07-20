@@ -2,7 +2,6 @@ defmodule BackUp.Folder do
   use GenServer, restart: :transient
 
   alias BackUp.AppState
-  alias BackUp.Filesystem
   
   def start_link(state) do
     GenServer.start_link(__MODULE__, state)
@@ -91,8 +90,8 @@ defmodule BackUp.Folder do
   end
 
   defp copy_files(state) do
+    IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
     unless state.files == [] do
-      IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
       Enum.each(state.files, fn(file_path) ->
 	Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
 	  {:ok, pid} =
@@ -107,11 +106,9 @@ defmodule BackUp.Folder do
 		}
 	      }
 	    )
-	  BackUp.Folder.crawl_folder(pid)
+	  BackUp.FileCopyProc.run(pid)
 	end)
       end)
-    else
-      IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
     end
   end
   

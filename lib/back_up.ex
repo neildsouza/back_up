@@ -1,6 +1,13 @@
 defmodule BackUp do
   alias BackUp.AppState
 
+  def test() do
+    BackUp.set_start_folder "/home/neil/downloads"
+    BackUp.set_backup_folder "/home/neil/test_folder_1"
+    BackUp.set_backup_folder "/home/neil/test_folder_2"
+    start()
+  end
+
   def remove_all_backup_folders() do
     AppState.remove_all_backup_folders()
   end
@@ -32,6 +39,7 @@ defmodule BackUp do
 	  }
 	)
 	BackUp.Folder.crawl_folder(pid)
+	BackUp.TallyProc.get_pending()
     end
   end
 

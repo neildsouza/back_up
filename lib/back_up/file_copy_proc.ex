@@ -1,6 +1,8 @@
 defmodule BackUp.FileCopyProc do
   use GenServer
 
+  alias BackUp.Filesystem
+
   def start_link(state) do
     GenServer.start_link(__MODULE__, state)
   end
@@ -19,35 +21,34 @@ defmodule BackUp.FileCopyProc do
       state.start_folder,
       state.backup_folder
     )
+    IO.puts "**" <> state.src_file
+    IO.puts "****" <> dst_path
 
     if File.exists?(dst_path) do
-      case File.cp(src_file, dst_path, &cp_file/2) do
+      case File.cp(state.src_file, dst_path, &cp_file/2) do
 	:ok ->
-	  write_file_stats(src_file, dst_path)
+	  write_file_stats(state.src_file, dst_path)
 	{:error, reason} ->
 	  msg = """
-	     Msg: Error backing up file #{src_file} to #{dst_path}
+	     Msg: Error backing up file #{state.src_file} to #{dst_path}
 	  Reason: #{inspect reason}
-		  """	
+	  """	
 	  IO.puts(msg)
       end
     else
-      case File.cp(src_file, dst_path) do
+      case File.cp(state.src_file, dst_path) do
 	:ok ->
-	  write_file_stats(src_file, dst_path)
-	IO.puts("#{src_file} --> #{dst_path}")
+	  write_file_stats(state.src_file, dst_path)
+	IO.puts("#{state.src_file} --> #{dst_path}")
 	{:error, reason} ->
 	  msg = """
-	     Msg: Error backing up file #{src_file} to #{dst_path}
+	     Msg: Error backing up file #{state.src_file} to #{dst_path}
 	  Reason: #{inspect reason}
-		  """
+	  """
 	  IO.puts(msg)
       end
     end
 
-    %{active: active} = DynamicSupervisor.count_children(BackUp.FilesystemSup)
-    IO.puts("Files & folders remaining: #{active - 1}")
-      
     {:stop, :shutdown, state}
   end
 
