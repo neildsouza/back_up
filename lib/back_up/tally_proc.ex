@@ -14,7 +14,7 @@ defmodule BackUp.TallyProc do
   end
 
   def handle_cast(:get_pending, state) do
-    Process.send_after(__MODULE__, :pending, 10000)
+    Process.send_after(__MODULE__, :pending, 5000)
     {:noreply, state}
   end
 
@@ -25,7 +25,7 @@ defmodule BackUp.TallyProc do
 
     if active > 0 do
       IO.puts("Files & folders pending: #{active}")
-      Process.send_after(__MODULE__, :pending, 10000)
+      Process.send_after(__MODULE__, :pending, 5000)
       {:noreply, state}
     else
       IO.puts("All done")

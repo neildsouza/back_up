@@ -21,8 +21,8 @@ defmodule BackUp.FileCopyProc do
       state.start_folder,
       state.backup_folder
     )
-    IO.puts "**" <> state.src_file
-    IO.puts "****" <> dst_path
+    IO.puts "Src: " <> state.src_file
+    IO.puts "Dst: " <> dst_path
 
     if File.exists?(dst_path) do
       case File.cp(state.src_file, dst_path, &cp_file/2) do
@@ -64,7 +64,7 @@ defmodule BackUp.FileCopyProc do
     src_hash = Task.await(src_hash_task, :infinity)
     dst_hash = Task.await(dst_hash_task, :infinity)
     
-    unless src_hash  == dst_hash do
+    unless src_hash == dst_hash do
       IO.puts("#{src_file} --> #{dst_file}")
       true
     else

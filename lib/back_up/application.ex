@@ -15,8 +15,7 @@ defmodule BackUp.Application do
 	  name: BackUp.FilesystemSup
 	]
       },
-      BackUp.AppState,
-      BackUp.TallyProc
+      BackUp.AppState
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

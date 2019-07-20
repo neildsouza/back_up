@@ -62,8 +62,7 @@ defmodule BackUp.Folder do
   end
 
   def handle_cast(:crawl_folder, state) do
-    files_and_folders =
-      BackUp.Filesystem.crawl_folder(state.current_folder)
+    files_and_folders = BackUp.Filesystem.crawl_folder(state.current_folder)
     
     state = state |> Map.merge(files_and_folders)
 
@@ -82,7 +81,7 @@ defmodule BackUp.Folder do
       end)
     end
 
-    # IO.inspect(state)
+    IO.inspect(state)
 
     cp(self())
     
@@ -92,7 +91,7 @@ defmodule BackUp.Folder do
   defp copy_files(state) do
     IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
     unless state.files == [] do
-      Enum.each(state.files, fn(file_path) ->
+      Enum.each(state.files, fn(src_file) ->
 	Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
 	  {:ok, pid} =
 	    DynamicSupervisor.start_child(
@@ -100,7 +99,7 @@ defmodule BackUp.Folder do
 	      {
 		BackUp.FileCopyProc,
 		%{
-		  src_file: file_path,
+		  src_file: src_file,
 		  start_folder: state.start_folder,
 		  backup_folder: backup_dst_folder.backup_folder
 		}
