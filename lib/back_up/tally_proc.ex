@@ -1,7 +1,7 @@
 defmodule BackUp.TallyProc do
   use GenServer
 
-  @poll_time (1000 * 60)
+  @poll_time (1000 * 10)
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
