@@ -36,6 +36,10 @@ defmodule BackUp.AppState do
     GenServer.call(__MODULE__, {:set_start_folder, folder})
   end
 
+  def set_start_time() do
+    GenServer.call(__MODULE__, :set_start_time)
+  end
+
   def init(state) do
     {:ok, state}
   end
@@ -89,5 +93,9 @@ defmodule BackUp.AppState do
       state
       |> Map.put(:start_folder, Path.split(folder) |> Path.join())
     {:reply, state, state}
+  end
+
+  def handle_call(:set_start_time, _, state) do
+    {:reply, :ok, put_in(state, [:start_time], Time.utc_now())}
   end
 end

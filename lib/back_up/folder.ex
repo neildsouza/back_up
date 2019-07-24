@@ -89,7 +89,7 @@ defmodule BackUp.Folder do
   end
 
   defp copy_files(state) do
-    IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
+    # IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
     unless state.files == [] do
       Enum.each(state.files, fn(src_file) ->
 	Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->

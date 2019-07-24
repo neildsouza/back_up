@@ -29,9 +29,25 @@ defmodule BackUp.TallyProc do
       IO.puts("Files & folders pending: #{active}")
       Process.send_after(__MODULE__, :pending, @poll_time)
     else
-      IO.puts("\n====================================")
-      IO.puts("             All done               ")
-      IO.puts("====================================")
+      app_state = BackUp.AppState.get_state()
+      start_time = app_state.start_time
+      end_time = Time.utc_now()
+      diff = Time.diff(end_time, start_time)
+      time_taken = BackUp.Util.convert(diff)
+      msg = "ALL DONE in #{time_taken}"
+      x = Enum.reduce(1..String.length(msg) + 16, "", fn(_x, acc) ->
+	acc <> "="
+      end)
+      
+      final_msg = """
+        #{x}
+
+                #{msg}
+
+        #{x}
+      """
+      IO.puts("\n")
+      IO.puts(final_msg)
     end
     
     {:noreply, state}

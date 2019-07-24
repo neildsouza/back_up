@@ -14,7 +14,9 @@ defmodule BackUp do
   end
   
   def start() do
+    AppState.set_start_time()
     app_state = AppState.get_state()
+    
     cond do
       app_state.start_folder == "" ->
 	IO.puts("Please set the start folder")
