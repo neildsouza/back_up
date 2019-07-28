@@ -2,4 +2,5 @@
 /home/neil/test_folder_1
 /home/neil/test_folder_2
 /home/neil/test_folder_3
-C:\AA\BBB
+D:/AA/BBB
+E:/my backup folder
