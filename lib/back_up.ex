@@ -14,6 +14,10 @@ defmodule BackUp do
   end
   
   def start() do
+    reset()
+    
+    set_from_config()
+    
     AppState.set_start_time()
     app_state = AppState.get_state()
     
@@ -40,6 +44,25 @@ defmodule BackUp do
 
   def set_backup_folder(folder) do
     AppState.set_backup_folder(folder)
+  end
+
+  def set_from_config() do
+    case File.read("priv/folders.txt") do
+      {:ok, config} ->
+	all_folders = Enum.filter(String.split(config, "\n"), fn(folder) ->
+	  String.trim(folder) != ""
+        end)
+	[start_folder | backup_folders] = all_folders
+	set_start_folder(start_folder)
+	Enum.each(backup_folders, fn(folder) -> set_backup_folder(folder) end)
+	
+      {:error, reason} ->
+	msg = """
+	  Msg: Cannot read config
+	Error: #{inspect(reason)}
+	"""
+	IO.puts(msg)
+    end
   end
 
   def set_start_folder(folder) do

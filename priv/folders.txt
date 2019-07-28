@@ -1,0 +1,5 @@
+/home/neil/stuff
+/home/neil/test_folder_1
+/home/neil/test_folder_2
+/home/neil/test_folder_3
+C:\AA\BBB

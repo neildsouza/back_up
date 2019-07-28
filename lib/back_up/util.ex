@@ -1,10 +1,10 @@
 defmodule BackUp.Util do
   def convert(secs) when 0 <= secs and secs < 60 do
-    "0 hr(s) 0 mins #{secs} secs"
+    "0 hr(s) 0 min(s) #{secs} sec(s)"
   end
 
   def convert(secs) when secs == 60 do
-    "0 hr(s) 1 min 0 secs"
+    "0 hr(s) 1 min(s) 0 sec(s)"
   end
 
   def convert(secs) when 60 < secs and secs < 3600 do
@@ -14,7 +14,7 @@ defmodule BackUp.Util do
   end
 
   def convert(secs) when secs == 3600 do
-    "1 hr(s) 0 mins 0 secs"
+    "1 hr(s) 0 min(s) 0 sec(s)"
   end
 
   def convert(secs) when secs > 3600 do
