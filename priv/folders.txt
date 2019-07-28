@@ -1,6 +1,3 @@
-/home/neil/stuff
-/home/neil/test_folder_1
-/home/neil/test_folder_2
-/home/neil/test_folder_3
-D:/AA/BBB
-E:/my backup folder
+/home/neil
+/run/media/neil/backup/arch_backup
+/run/media/neil/data/arch_backup
