@@ -84,7 +84,6 @@ defmodule BackUp.Folder do
 	# IO.inspect(state)
 
 	cp(self())
-	
 	{:noreply, state}
 	
       {:error, e} ->
@@ -93,6 +92,7 @@ defmodule BackUp.Folder do
         Error: #{inspect e}
 	"""
 	IO.puts(msg)
+	{:noreply, state}
     end
   end
 
