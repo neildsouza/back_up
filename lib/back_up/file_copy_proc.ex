@@ -28,7 +28,7 @@ defmodule BackUp.FileCopyProc do
 	  write_file_stats(state.src_file, dst_path)
 	{:error, reason} ->
 	  msg = """
-	     Msg: Error backing up file #{state.src_file} to #{dst_path}
+	  Msg: Error backing up file #{state.src_file} to #{dst_path}
 	  Reason: #{inspect reason}
 	  """	
 	  IO.puts(msg)
@@ -40,7 +40,7 @@ defmodule BackUp.FileCopyProc do
 	IO.puts("#{state.src_file} --> #{dst_path}")
 	{:error, reason} ->
 	  msg = """
-	     Msg: Error backing up file #{state.src_file} to #{dst_path}
+	  Msg: Error backing up file #{state.src_file} to #{dst_path}
 	  Reason: #{inspect reason}
 	  """
 	  IO.puts(msg)

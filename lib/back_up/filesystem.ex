@@ -1,17 +1,18 @@
 defmodule BackUp.Filesystem do
   def crawl_folder(folder) do
-    get_folder_contents(folder)
-    |> create_paths()
-    |> separate_into_files_and_folders()
+    case get_folder_contents(folder) do
+      {:ok, folder, contents} ->
+	create_paths(folder, contents)
+	|> separate_into_files_and_folders()
+      {:error, e} ->
+	IO.inspect(e)
+    end
   end
 
-  defp create_paths(contents) do
-    case contents do
-      {:ok, folder, contents} ->
-	Enum.map(contents, fn(content) ->
-	  Path.join(folder, content)
-	end)
-    end
+  defp create_paths(folder, contents) do
+    Enum.map(contents, fn(content) ->
+      Path.join(folder, content)
+    end)
   end
 
   defp get_folder_contents(folder) do
@@ -38,11 +39,13 @@ defmodule BackUp.Filesystem do
   end
   
   def hash_content(content) do
-    File.stream!(content,[],2048) 
-    |> Enum.reduce(:crypto.hash_init(:sha256), fn(line, acc) ->
-         :crypto.hash_update(acc,line)
-       end)
-    |> :crypto.hash_final 
-    |> Base.encode16
+    if File.exists?(content) do
+      File.stream!(content,[],2048) 
+      |> Enum.reduce(:crypto.hash_init(:sha256), fn(line, acc) ->
+           :crypto.hash_update(acc,line)
+         end)
+      |> :crypto.hash_final 
+      |> Base.encode16
+    end
   end
 end
