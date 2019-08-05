@@ -62,30 +62,38 @@ defmodule BackUp.Folder do
   end
 
   def handle_cast(:crawl_folder, state) do
-    files_and_folders = BackUp.Filesystem.crawl_folder(state.current_folder)
-    
-    state = state |> Map.merge(files_and_folders)
+    case BackUp.Filesystem.crawl_folder(state.current_folder)do
+      {:ok, files_and_folders} ->
+	state = state |> Map.merge(files_and_folders)
 
-    if length(state.folders) > 0 do
-      Enum.each(state.folders, fn(folder) ->
-	{:ok, pid} = DynamicSupervisor.start_child(
-	  BackUp.FilesystemSup,
-	  {
-	    BackUp.Folder,
-	    %{
-	      current_folder: folder
+	if length(state.folders) > 0 do
+	  Enum.each(state.folders, fn(folder) ->
+	    {:ok, pid} = DynamicSupervisor.start_child(
+	    BackUp.FilesystemSup,
+	    {
+	      BackUp.Folder,
+	      %{
+		current_folder: folder
+	      }
 	    }
-	  }
-	)
-	BackUp.Folder.crawl_folder(pid)
-      end)
+	  )
+	    BackUp.Folder.crawl_folder(pid)
+	  end)
+	end
+
+	# IO.inspect(state)
+
+	cp(self())
+	
+	{:noreply, state}
+	
+      {:error, e} ->
+	msg = """
+	  Msg: Cannot access directory #{state.current_folder}
+        Error: #{inspect e}
+	"""
+	IO.puts(msg)
     end
-
-    # IO.inspect(state)
-
-    cp(self())
-    
-    {:noreply, state}
   end
 
   defp copy_files(state) do

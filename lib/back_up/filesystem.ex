@@ -2,10 +2,13 @@ defmodule BackUp.Filesystem do
   def crawl_folder(folder) do
     case get_folder_contents(folder) do
       {:ok, folder, contents} ->
-	create_paths(folder, contents)
-	|> separate_into_files_and_folders()
+	files_and_folders =
+	  create_paths(folder, contents)
+	  |> separate_into_files_and_folders()
+	{:ok, files_and_folders}
+	
       {:error, e} ->
-	IO.inspect(e)
+	{:error, e}
     end
   end
 
