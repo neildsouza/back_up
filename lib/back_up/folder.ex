@@ -2,6 +2,7 @@ defmodule BackUp.Folder do
   use GenServer, restart: :transient
 
   alias BackUp.AppState
+  alias BackUp.Filesystem
   
   def start_link(state) do
     GenServer.start_link(__MODULE__, state)
@@ -68,22 +69,21 @@ defmodule BackUp.Folder do
 
 	if length(state.folders) > 0 do
 	  Enum.each(state.folders, fn(folder) ->
-	    {:ok, pid} = DynamicSupervisor.start_child(
-	    BackUp.FilesystemSup,
-	    {
-	      BackUp.Folder,
-	      %{
-		current_folder: folder
-	      }
-	    }
-	  )
+	    {:ok, pid} =
+	      DynamicSupervisor.start_child(
+		BackUp.FilesystemSup,
+		{
+		  BackUp.Folder, %{current_folder: folder}
+		}
+	      )
+
 	    BackUp.Folder.crawl_folder(pid)
 	  end)
 	end
 
 	# IO.inspect(state)
-
 	cp(self())
+	
 	{:noreply, state}
 	
       {:error, e} ->
@@ -98,8 +98,11 @@ defmodule BackUp.Folder do
 
   defp copy_files(state) do
     # IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
+    
     unless state.files == [] do
       Enum.each(state.files, fn(src_file) ->
+	src_file_hash = Filesystem.hash_content(src_file)
+	
 	Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
 	  {:ok, pid} =
 	    DynamicSupervisor.start_child(
@@ -108,11 +111,13 @@ defmodule BackUp.Folder do
 		BackUp.FileCopyProc,
 		%{
 		  src_file: src_file,
+		  src_file_hash: src_file_hash,
 		  start_folder: state.start_folder,
 		  backup_folder: backup_dst_folder.backup_folder
 		}
 	      }
 	    )
+	  
 	  BackUp.FileCopyProc.run(pid)
 	end)
       end)
@@ -124,6 +129,7 @@ defmodule BackUp.Folder do
       case File.mkdir_p(dst_folder) do
 	:ok ->
 	  IO.puts("Created folder #{dst_folder}")
+	  
 	{:error, reason} ->
 	  msg = """
 	    Msg: Cannot create directory #{dst_folder}

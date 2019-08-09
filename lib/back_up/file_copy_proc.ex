@@ -23,50 +23,30 @@ defmodule BackUp.FileCopyProc do
     )
 
     if File.exists?(dst_path) do
-      case File.cp(state.src_file, dst_path, &cp_file/2) do
-	:ok ->
-	  write_file_stats(state.src_file, dst_path)
-	{:error, reason} ->
-	  msg = """
-	  Msg: Error backing up file #{state.src_file} to #{dst_path}
-	  Reason: #{inspect reason}
-	  """	
-	  IO.puts(msg)
+      dst_hash = Filesystem.hash_content(dst_path)
+
+      unless state.src_file_hash == dst_hash do
+	cp_file(state.src_file, dst_path)
       end
     else
-      case File.cp(state.src_file, dst_path) do
-	:ok ->
-	  write_file_stats(state.src_file, dst_path)
-	IO.puts("#{state.src_file} --> #{dst_path}")
-	{:error, reason} ->
-	  msg = """
-	  Msg: Error backing up file #{state.src_file} to #{dst_path}
-	  Reason: #{inspect reason}
-	  """
-	  IO.puts(msg)
-      end
+      cp_file(state.src_file, dst_path)
     end
 
     {:stop, :shutdown, state}
   end
 
   defp cp_file(src_file, dst_file) do
-    src_hash_task = Task.async(fn ->
-      Filesystem.hash_content(src_file)
-    end)
+    case File.cp(src_file, dst_file) do
+      :ok ->
+	write_file_stats(src_file, dst_file)
+        IO.puts("#{src_file} --> #{dst_file}")
 
-    dst_hash_task = Task.async(fn ->
-      Filesystem.hash_content(dst_file)
-    end)
-
-    src_hash = Task.await(src_hash_task, :infinity)
-    dst_hash = Task.await(dst_hash_task, :infinity)
-    
-    unless src_hash == dst_hash do
-      IO.puts("#{src_file} --> #{dst_file}")
-      true
-    else
-      false
+      {:error, reason} ->
+	msg = """
+	   Msg: Error backing up file #{src_file} to #{dst_file}
+	Reason: #{inspect reason}
+	"""
+	IO.puts(msg)
     end
   end
 
