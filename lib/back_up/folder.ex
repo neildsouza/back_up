@@ -2,7 +2,6 @@ defmodule BackUp.Folder do
   use GenServer, restart: :transient
 
   alias BackUp.AppState
-  alias BackUp.Filesystem
   
   def start_link(state) do
     GenServer.start_link(__MODULE__, state)
@@ -100,17 +99,22 @@ defmodule BackUp.Folder do
     # IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
     
     unless state.files == [] do
-      all_file_hash_tasks = Enum.map(state.files, fn(src_file) ->
-	Task.async(fn ->
-	  Filesystem.hash_content(src_file)
-	end)
+      all_file_stats = Enum.map(state.files, fn(src_file) ->
+	case File.lstat(src_file, time: :posix) do
+	  {:ok, src_file_stat} -> src_file_stat
+
+	  {:error, reason} ->
+	    msg = """
+	      Msg: Cannot get file stat for #{src_file}
+	    Error: #{inspect(reason)}
+	    """
+	    IO.puts(msg)
+	end
       end)
 
-      all_files_and_tasks = Enum.zip(state.files, all_file_hash_tasks)
+      all_files_with_stats = Enum.zip(state.files, all_file_stats)
       
-      Enum.each(all_files_and_tasks, fn({src_file, hash_task}) ->
-	src_file_hash = Task.await(hash_task, :infinity)
-	
+      Enum.each(all_files_with_stats, fn({src_file, file_stat}) ->
 	Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
 	  {:ok, pid} =
 	    DynamicSupervisor.start_child(
@@ -119,7 +123,7 @@ defmodule BackUp.Folder do
 		BackUp.FileCopyProc,
 		%{
 		  src_file: src_file,
-		  src_file_hash: src_file_hash,
+		  src_file_stat: file_stat,
 		  start_folder: state.start_folder,
 		  backup_folder: backup_dst_folder.backup_folder
 		}

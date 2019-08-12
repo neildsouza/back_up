@@ -7,6 +7,7 @@ defmodule BackUp.MixProject do
       version: "0.1.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps()
     ]
   end
@@ -16,6 +17,12 @@ defmodule BackUp.MixProject do
     [
       extra_applications: [:logger],
       mod: {BackUp.Application, []}
+    ]
+  end
+
+  defp aliases do
+    [
+      clean_compile: ["clean", "compile"]
     ]
   end
 

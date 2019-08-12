@@ -1,8 +1,6 @@
 defmodule BackUp.FileCopyProc do
   use GenServer, restart: :transient
 
-  alias BackUp.Filesystem
-
   def start_link(state) do
     GenServer.start_link(__MODULE__, state)
   end
@@ -16,20 +14,30 @@ defmodule BackUp.FileCopyProc do
   end
 
   def handle_cast(:run, state) do
-    dst_path = String.replace(
+    dst_file = String.replace(
       state.src_file,
       state.start_folder,
       state.backup_folder
     )
 
-    if File.exists?(dst_path) do
-      dst_hash = Filesystem.hash_content(dst_path)
-
-      unless state.src_file_hash == dst_hash do
-	cp_file(state.src_file, dst_path)
+    if File.exists?(dst_file) do
+      case File.lstat(dst_file, time: :posix) do
+	{:ok, dst_file_stat} ->
+	  mtime_check = state.src_file_stat.mtime == dst_file_stat.mtime
+	  size_check = state.src_file_stat.size == dst_file_stat.size
+	  unless mtime_check and size_check do
+	    cp_file(state.src_file, dst_file)
+	  end
+	  
+	{:error, reason} ->
+	  msg = """
+	    Msg: Cannot get file stat for #{dst_file}
+	  Error: #{inspect(reason)}
+	  """
+	  IO.puts(msg)
       end
     else
-      cp_file(state.src_file, dst_path)
+      cp_file(state.src_file, dst_file)
     end
 
     {:stop, :shutdown, state}
