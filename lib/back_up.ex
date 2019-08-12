@@ -53,8 +53,16 @@ defmodule BackUp do
 	  String.trim(folder) != ""
         end)
 	[start_folder | backup_folders] = all_folders
-	set_start_folder(start_folder)
-	Enum.each(backup_folders, fn(folder) -> set_backup_folder(folder) end)
+	
+	if File.dir?(start_folder) do
+	  set_start_folder(start_folder)
+	end
+	
+	Enum.each(backup_folders, fn(folder) ->
+	  if File.dir?(folder) do
+	    set_backup_folder(folder)
+	  end
+	end)
 	
       {:error, reason} ->
 	msg = """
