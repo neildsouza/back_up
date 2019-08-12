@@ -100,8 +100,16 @@ defmodule BackUp.Folder do
     # IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
     
     unless state.files == [] do
-      Enum.each(state.files, fn(src_file) ->
-	src_file_hash = Filesystem.hash_content(src_file)
+      all_file_hash_tasks = Enum.map(state.files, fn(src_file) ->
+	Task.async(fn ->
+	  Filesystem.hash_content(src_file)
+	end)
+      end)
+
+      all_files_and_tasks = Enum.zip(state.files, all_file_hash_tasks)
+      
+      Enum.each(all_files_and_tasks, fn({src_file, hash_task}) ->
+	src_file_hash = Task.await(hash_task, :infinity)
 	
 	Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
 	  {:ok, pid} =
