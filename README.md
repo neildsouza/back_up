@@ -3,14 +3,13 @@
 ## Steps to run the app
 
 1. Open the back_up/priv/folders.txt file
-2. The first line *has* to contain the **Source folder**
-3. The *rest of the lines* need to have the **Destination folders**
-4. You can have *many* destination folders
-5. Make sure the destination folders don't overlap
-6. All paths should use forward slashes ie. /
-7. Open a commandline
-8. Navigate to the **back_up** folder
-9. Execute the commands below
+2. Configure the relevant backup scenario
+3. You can have *many* destination folders
+4. Make sure the destination folders don't overlap
+5. All paths should use forward slashes ie. /
+6. Open a command line
+7. Navigate to the **back_up** folder
+8. Execute the commands below
 
 ```elixir
 [neil@Arch-Desktop back_up]$ iex -S mix
