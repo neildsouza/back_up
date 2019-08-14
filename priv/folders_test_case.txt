@@ -1,17 +1,17 @@
 [from]
-/home/neil
+/home/neil/stuff
 
 [to]
-/run/media/neil/backup/arch_backup
-/run/media/neil/data/arch_backup
+/home/neil/test_folder_1
+/home/neil/test_folder_2
 
 [ignore_folders]
-/home/neil/.config
+/home/neil/stuff/icons
 
 [ignore_files]
 /home/neil/.abclrc
 
-[mirror_folders]
+[mirror]
 /home/neil/programs/elixir_progs
 /home/neil/.mozilla/firefox
 /home/neil/.thunderbird

@@ -41,6 +41,9 @@ defmodule BackUp.Folder do
       state
       |> Map.put(:start_folder, start_folder)
       |> Map.put(:backup_dst_folders, backup_dst_folders)
+      |> Map.put(:ignore_folders, app_state.ignore_folders)
+      |> Map.put(:ignore_files, app_state.ignore_files)
+      |> Map.put(:mirror_folders, app_state.mirror_folders)
     
     # IO.inspect(state)
     
@@ -68,15 +71,24 @@ defmodule BackUp.Folder do
 
 	if length(state.folders) > 0 do
 	  Enum.each(state.folders, fn(folder) ->
-	    {:ok, pid} =
-	      DynamicSupervisor.start_child(
-		BackUp.FilesystemSup,
-		{
-		  BackUp.Folder, %{current_folder: folder}
-		}
-	      )
+	    cond do
+	      Enum.member?(state.mirror_folders, folder) ->
+		IO.puts("Ignoring mirroring for #{folder} for now")
+		
+	      Enum.member?(state.ignore_folders, folder) ->
+		IO.puts("Ignoring folder #{folder}")
 
-	    BackUp.Folder.crawl_folder(pid)
+	      true ->
+		{:ok, pid} =
+		  DynamicSupervisor.start_child(
+		    BackUp.FilesystemSup,
+		    {
+		      BackUp.Folder, %{current_folder: folder}
+		    }
+		  )
+
+		BackUp.Folder.crawl_folder(pid)
+	    end
 	  end)
 	end
 
