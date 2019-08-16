@@ -18,7 +18,7 @@ defmodule BackUp do
   end
 
   def set_from_config() do
-    case File.read("priv/folders.txt") do
+    case File.read("priv/backup_configs/folders.txt") do
       {:ok, config} ->
 	config_file =
 	  Enum.filter(String.split(config, "\n"), fn(folder) ->
