@@ -26,4 +26,4 @@ back_up-*.tar
 *~
 
 # Ignore backup config files
-/priv/backup_configs
+priv/backup_configs
