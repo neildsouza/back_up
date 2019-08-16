@@ -1,31 +1,16 @@
 [from]
-/home/neil
+/home/neil/stuff
 
 [to]
-/run/media/neil/backup/arch_backup
-/run/media/neil/data/arch_backup
+/home/neil/test_folder_1
+/home/neil/test_folder_2
 
 [ignore_folders]
-/home/neil/.cache
-/home/neil/.config
-/home/neil/.emacs.d/auto-save-list
-/home/neil/.local
+/home/neil/stuff/icons
 
 [ignore_files]
-/home/neil/.xsession-errors
-/home/neil/.bash_history
-/home/neil/.xsession-errors.old
-/home/neil/.Xauthority
+/home/neil/stuff/wallpapers/239314-Linux-Arch_Linux-galaxy-universe.png
 
-[mirror]
-/home/neil/programs/elixir_progs
-/home/neil/.mozilla/firefox
-/home/neil/.thunderbird
-/home/neil/programs/pointer8/code/elixir_progs
-/home/neil/programs/pointer8/code/webapi
-/home/neil/programs/pointer8/code/graph_it
-/home/neil/programs/pointer8/code/maintenances
-/home/neil/programs/pointer8/code/backend_scripts
-/home/neil/programs/pointer8/code/data_import
-/home/neil/programs/pointer8/code/lisp_progs
+[mirror_folders]
+/home/neil/stuff/wallpapers
 

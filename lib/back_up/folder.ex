@@ -65,6 +65,10 @@ defmodule BackUp.Folder do
   end
 
   def handle_cast(:crawl_folder, state) do
+    Task.start(fn ->
+      delete_if_mirrored(state)
+    end)
+    
     case BackUp.Filesystem.crawl_folder(state.current_folder)do
       {:ok, files_and_folders} ->
 	state = state |> Map.merge(files_and_folders)
@@ -72,9 +76,6 @@ defmodule BackUp.Folder do
 	if length(state.folders) > 0 do
 	  Enum.each(state.folders, fn(folder) ->
 	    cond do
-	      Enum.member?(state.mirror_folders, folder) ->
-		IO.puts("Ignoring mirroring for #{folder} for now")
-		
 	      Enum.member?(state.ignore_folders, folder) ->
 		IO.puts("Ignoring folder #{folder}")
 
@@ -163,6 +164,32 @@ defmodule BackUp.Folder do
 	  """
 	  IO.puts(msg)
       end
+    end
+  end
+
+  defp delete_if_mirrored(state) do
+    mirror? = Enum.any?(state.mirror_folders, fn(mirror_folder) ->
+      String.contains?(state.current_folder, mirror_folder)
+    end)
+
+    if mirror? do
+      Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
+	{:ok, pid} =
+	  DynamicSupervisor.start_child(
+	    BackUp.FilesystemSup,
+	    {
+	      BackUp.DeleteExtraFilesProc,
+	      %{
+		current_folder: state.current_folder,
+		start_folder: state.start_folder,
+		dst_folder: backup_dst_folder.dst_folder,
+		backup_folder: backup_dst_folder.backup_folder
+	      }
+	    }
+	  )
+	
+	BackUp.DeleteExtraFilesProc.run(pid)
+      end)
     end
   end
 end
