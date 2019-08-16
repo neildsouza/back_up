@@ -25,22 +25,34 @@ defmodule BackUp.DeleteExtraFilesProc do
 	      temp = dst_files_and_folders -- files_and_folders
 
 	      Enum.each(temp, fn(file_or_dir) ->
-		unless File.dir?(file_or_dir) do
-		  file = file_or_dir
+		dst_file_or_folder_path = state.dst_folder <> "/" <> file_or_dir
+		
+		case File.dir?(dst_file_or_folder_path) do
+		  true ->
+		    case File.rm_rf(dst_file_or_folder_path) do
+		      {:ok, _} ->
+			IO.puts("Deleted folder #{dst_file_or_folder_path}")
 
-		  dst_file = state.dst_folder <> "/" <> file
+		      {:error, reason} ->
+			msg = """
+		          Msg: Could not delete file #{dst_file_or_folder_path}
+			Error: #{IO.inspect reason}
+			"""
+			IO.puts(msg)
+		    end
 
-		  case File.rm(dst_file) do
-		    :ok ->
-		      IO.puts("Deleted #{dst_file}")
+		  false ->
+		    case File.rm(dst_file_or_folder_path) do
+		      :ok ->
+			IO.puts("Deleted file #{dst_file_or_folder_path}")
 
-		    {:error, reason} ->
-		      msg = """
-		        Msg: Could not delete file #{dst_file}
-		      Error: #{IO.inspect reason}
-		      """
-		      IO.puts(msg)
-		  end
+		      {:error, reason} ->
+			msg = """
+		          Msg: Could not delete file #{dst_file_or_folder_path}
+			Error: #{IO.inspect reason}
+			"""
+			IO.puts(msg)
+		    end
 		end
 	      end)
 
