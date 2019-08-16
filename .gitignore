@@ -25,5 +25,3 @@ back_up-*.tar
 # Ignore emacs temp files
 *~
 
-# Ignore backup config files
-priv/backup_configs
