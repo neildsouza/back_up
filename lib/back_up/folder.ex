@@ -111,7 +111,9 @@ defmodule BackUp.Folder do
     # IO.puts("Folder: #{state.current_folder}, Files: #{length(state.files)}")
     
     unless state.files == [] do
-      all_file_stats = Enum.map(state.files, fn(src_file) ->
+      relevant_files = state.files -- state.ignore_files
+      
+      all_file_stats = Enum.map(relevant_files, fn(src_file) ->
 	case File.lstat(src_file, time: :posix) do
 	  {:ok, src_file_stat} -> src_file_stat
 
@@ -124,7 +126,7 @@ defmodule BackUp.Folder do
 	end
       end)
 
-      all_files_with_stats = Enum.zip(state.files, all_file_stats)
+      all_files_with_stats = Enum.zip(relevant_files, all_file_stats)
       
       Enum.each(all_files_with_stats, fn({src_file, file_stat}) ->
 	Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->

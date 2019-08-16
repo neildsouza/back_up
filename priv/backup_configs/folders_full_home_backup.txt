@@ -6,10 +6,16 @@
 /run/media/neil/data/arch_backup
 
 [ignore_folders]
+/home/neil/.cache
 /home/neil/.config
+/home/neil/.emacs.d/auto-save-list
+/home/neil/.local
 
 [ignore_files]
-/home/neil/.abclrc
+/home/neil/.xsession-errors
+/home/neil/.bash_history
+/home/neil/.xsession-errors.old
+/home/neil/.Xauthority
 
 [mirror]
 /home/neil/programs/elixir_progs

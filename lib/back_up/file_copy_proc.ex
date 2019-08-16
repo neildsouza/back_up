@@ -24,8 +24,8 @@ defmodule BackUp.FileCopyProc do
       case File.lstat(dst_file, time: :posix) do
 	{:ok, dst_file_stat} ->
 	  mtime_check = state.src_file_stat.mtime == dst_file_stat.mtime
-	  size_check = state.src_file_stat.size == dst_file_stat.size
-	  unless mtime_check and size_check do
+	  
+	  unless mtime_check do
 	    cp_file(state.src_file, dst_file)
 	  end
 	  

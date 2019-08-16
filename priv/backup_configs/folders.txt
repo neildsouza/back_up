@@ -17,7 +17,7 @@
 /home/neil/.xsession-errors.old
 /home/neil/.Xauthority
 
-[mirror_folders]
+[mirror]
 /home/neil/programs/elixir_progs
 /home/neil/.mozilla/firefox
 /home/neil/.thunderbird
