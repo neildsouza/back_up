@@ -148,6 +148,8 @@ defmodule BackUp do
 	  :skip
 
 	true ->
+	  val = Path.split(val) |> Path.join()
+	  
 	  case acc.current do
 	    "from" -> put_in(acc, [:from], val)
 
