@@ -69,7 +69,7 @@ defmodule BackUp.Folder do
       delete_if_mirrored(state)
     end)
     
-    case BackUp.Filesystem.crawl_folder(state.current_folder)do
+    case BackUp.Filesystem.crawl_folder(state.current_folder) do
       {:ok, files_and_folders} ->
 	state = state |> Map.merge(files_and_folders)
 
