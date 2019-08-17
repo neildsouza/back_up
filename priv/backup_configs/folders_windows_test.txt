@@ -1,0 +1,14 @@
+[from]
+C:\Ruby25-x64
+
+[to]
+C:\Users\Neil D'souza\Desktop\Ruby25-x64
+
+[ignore_folders]
+C:\Ruby25-x64\ssl
+
+[ignore_files]
+C:\Ruby25-x64\LICENSE.txt
+
+[mirror_folders]
+C:\Ruby25-x64\bin
