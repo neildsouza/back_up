@@ -25,7 +25,7 @@ defmodule BackUp.DeleteExtraFilesProc do
 	      temp = dst_files_and_folders -- files_and_folders
 
 	      Enum.each(temp, fn(file_or_dir) ->
-		dst_file_or_folder_path = state.dst_folder <> "/" <> file_or_dir
+		dst_file_or_folder_path = Path.join(state.dst_folder, file_or_dir)
 		
 		case File.dir?(dst_file_or_folder_path) do
 		  true ->

@@ -21,6 +21,7 @@
 /home/neil/programs/elixir_progs
 /home/neil/.mozilla/firefox
 /home/neil/.thunderbird
+/home/neil/programs/pointer8/backups
 /home/neil/programs/pointer8/code/elixir_progs
 /home/neil/programs/pointer8/code/webapi
 /home/neil/programs/pointer8/code/graph_it
