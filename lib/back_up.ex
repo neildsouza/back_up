@@ -90,7 +90,6 @@ defmodule BackUp do
     
     set_from_config()
     
-    
     app_state = AppState.get_state()
     # IO.inspect(app_state)
     
