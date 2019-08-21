@@ -1,23 +1,46 @@
 defmodule BackUp do
   alias BackUp.AppState
 
-  def remove_all_backup_folders() do
-    AppState.remove_all_backup_folders()
+  def start() do
+    reset()
+
+    AppState.set_start_time()
+    
+    set_from_config()
+    
+    app_state = AppState.get_state()
+    # IO.inspect(app_state)
+    
+    cond do
+      app_state.start_folder == "" ->
+	IO.puts("Please set the start folder")
+      app_state.backup_folders == [] ->
+	IO.puts("Please set the backup folders")
+      true ->
+	IO.puts("Here goes nothing ...")
+	{:ok, pid} = DynamicSupervisor.start_child(
+	  BackUp.FilesystemSup,
+	  {
+	    BackUp.Folder,
+	    %{
+	      current_folder: app_state.start_folder
+	    }
+	  }
+	)
+	BackUp.Folder.crawl_folder(pid)
+	BackUp.TallyProc.get_pending()
+    end
   end
   
-  def remove_backup_folder(folder) do
-    AppState.remove_backup_folder(folder)
-  end
-  
-  def reset() do
+  defp reset() do
     AppState.reset_state()
   end
 
-  def set_backup_folder(folder) do
+  defp set_backup_folder(folder) do
     AppState.set_backup_folder(folder)
   end
 
-  def set_from_config() do
+  defp set_from_config() do
     case File.read("priv/backup_configs/folders.txt") do
       {:ok, config} ->
 	config_file =
@@ -67,51 +90,20 @@ defmodule BackUp do
     end
   end
 
-  def set_ignore_file(file) do
+  defp set_ignore_file(file) do
     AppState.set_ignore_file(file)
   end
 
-  def set_ignore_folder(folder) do
+  defp set_ignore_folder(folder) do
     AppState.set_ignore_folder(folder)
   end
 
-  def set_mirror_folder(folder) do
+  defp set_mirror_folder(folder) do
     AppState.set_mirror_folder(folder)
   end
 
-  def set_start_folder(folder) do
+  defp set_start_folder(folder) do
     AppState.set_start_folder(folder)
-  end
-  
-  def start() do
-    reset()
-
-    AppState.set_start_time()
-    
-    set_from_config()
-    
-    app_state = AppState.get_state()
-    # IO.inspect(app_state)
-    
-    cond do
-      app_state.start_folder == "" ->
-	IO.puts("Please set the start folder")
-      app_state.backup_folders == [] ->
-	IO.puts("Please set the backup folders")
-      true ->
-	IO.puts("Here goes nothing ...")
-	{:ok, pid} = DynamicSupervisor.start_child(
-	  BackUp.FilesystemSup,
-	  {
-	    BackUp.Folder,
-	    %{
-	      current_folder: app_state.start_folder
-	    }
-	  }
-	)
-	BackUp.Folder.crawl_folder(pid)
-	BackUp.TallyProc.get_pending()
-    end
   end
 
   defp parse_config_file(config_file) do
