@@ -29,6 +29,8 @@ defmodule BackUp.TallyProc do
       IO.puts("Files & folders pending: #{active}")
       Process.send_after(__MODULE__, :pending, @poll_time)
     else
+      BackUp.LinkCreationProc.run
+      
       app_state = BackUp.AppState.get_state()
       start_time = app_state.start_time
       end_time = Time.utc_now()

@@ -60,6 +60,7 @@ defmodule BackUp.Folder do
     end)
     
     copy_files(state)
+    provision_links(state)
     
     {:stop, :shutdown, state}
   end
@@ -70,8 +71,8 @@ defmodule BackUp.Folder do
     end)
     
     case BackUp.Filesystem.crawl_folder(state.current_folder) do
-      {:ok, files_and_folders} ->
-	state = state |> Map.merge(files_and_folders)
+      {:ok, files_folders_links} ->
+	state = state |> Map.merge(files_folders_links)
 
 	if length(state.folders) > 0 do
 	  Enum.each(state.folders, fn(folder) ->
@@ -191,5 +192,30 @@ defmodule BackUp.Folder do
 	BackUp.DeleteExtraFilesProc.run(pid)
       end)
     end
+  end
+
+  defp provision_links(state) do
+    Enum.each(state.links, fn(link) ->
+      case File.read_link(link) do
+	{:ok, path} ->
+	  Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
+	    new_link_path =
+	      String.replace(
+		link,
+		state.start_folder,
+		backup_dst_folder.backup_folder
+	      )
+	    
+	    new_path =
+	      String.replace(
+		path,
+		state.start_folder,
+		backup_dst_folder.backup_folder
+	      )
+
+	    BackUp.LinkCreationProc.add({new_path, new_link_path})
+	  end)
+      end
+    end)
   end
 end

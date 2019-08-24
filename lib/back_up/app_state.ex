@@ -10,11 +10,7 @@ defmodule BackUp.AppState do
   }
 
   def start_link(_) do
-    GenServer.start_link(
-      __MODULE__,
-      @init_state,
-      name: __MODULE__
-    )
+    GenServer.start_link(__MODULE__, @init_state, name: __MODULE__)
   end
 
   def get_state() do

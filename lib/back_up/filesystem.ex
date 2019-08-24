@@ -2,10 +2,10 @@ defmodule BackUp.Filesystem do
   def crawl_folder(folder) do
     case get_folder_contents(folder) do
       {:ok, folder, contents} ->
-	files_and_folders =
+	files_folders_links =
 	  create_paths(folder, contents)
-	  |> separate_into_files_and_folders()
-	{:ok, files_and_folders}
+	  |> separate_into_files_folders_links()
+	{:ok, files_folders_links}
 	
       {:error, e} ->
 	{:error, e}
@@ -36,16 +36,18 @@ defmodule BackUp.Filesystem do
     end
   end
 
-  defp separate_into_files_and_folders(folder_contents) do
+  defp separate_into_files_folders_links(folder_contents) do
     Enum.reduce(
       folder_contents,
-      %{files: [], folders: []},
+      %{files: [], folders: [], links: []},
       fn(content, acc) ->
 	case File.lstat(content) do
 	  {:ok, %File.Stat{type: :directory}} ->
 	    put_in(acc.folders, acc.folders ++ [content])
 	  {:ok, %File.Stat{type: :regular}} ->
 	    put_in(acc.files, acc.files ++ [content])
+	  {:ok, %File.Stat{type: :symlink}} ->
+	    put_in(acc.links, acc.links ++ [content])
 	  _ -> acc
 	end
       end

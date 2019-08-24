@@ -16,6 +16,7 @@ defmodule BackUp.Application do
 	]
       },
       BackUp.AppState,
+      BackUp.LinkCreationProc,
       BackUp.TallyProc
     ]
 
