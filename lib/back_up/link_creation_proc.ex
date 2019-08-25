@@ -25,7 +25,7 @@ defmodule BackUp.LinkCreationProc do
     {:reply, state, state}
   end
 
-  def handle_call(:run, state) do
+  def handle_call(:run, _, state) do
     IO.puts("Creating links")
 
     Enum.each(state, fn({new_path, new_link_path}) ->
@@ -46,7 +46,7 @@ defmodule BackUp.LinkCreationProc do
       end
     end)
     
-    {:noreply, state}
+    {:reply, :ok, state}
   end
 
   def handle_cast({:add, link}, state) do

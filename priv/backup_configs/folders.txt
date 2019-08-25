@@ -9,7 +9,7 @@
 /home/neil/.cache
 /home/neil/.config
 /home/neil/.emacs.d/auto-save-list
-/home/neil/.local
+/home/neil/.kde4
 
 [ignore_files]
 /home/neil/.xsession-errors
@@ -28,3 +28,4 @@
 /home/neil/programs/pointer8/code/backend_scripts
 /home/neil/programs/pointer8/code/data_import
 /home/neil/programs/pointer8/code/lisp_progs
+
