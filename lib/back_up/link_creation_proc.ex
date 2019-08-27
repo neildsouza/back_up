@@ -60,6 +60,10 @@ defmodule BackUp.LinkCreationProc do
 	msg = "Created link from #{new_link_path} to #{new_path}"
 	IO.puts(msg)
 
+      {:error, :eexist} ->
+	msg = "Link exists from #{new_link_path} to #{new_path}"
+	IO.puts(msg)
+
       {:error, reason} ->
 	msg = """
  	  Msg: Cannot create link #{new_link_path}
