@@ -173,8 +173,6 @@ defmodule BackUp.Folder do
       String.contains?(state.current_folder, mirror_folder)
     end)
 
-    IO.inspect(mirrored?)
-
     if mirrored? do
       Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
 	{:ok, pid} =
