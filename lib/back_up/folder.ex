@@ -66,9 +66,7 @@ defmodule BackUp.Folder do
   end
 
   def handle_cast(:crawl_folder, state) do
-    Task.start(fn ->
-      delete_if_mirrored(state)
-    end)
+    delete_if_mirrored(state)
     
     case BackUp.Filesystem.crawl_folder(state.current_folder) do
       {:ok, files_folders_links} ->
@@ -169,11 +167,13 @@ defmodule BackUp.Folder do
   end
 
   defp delete_if_mirrored(state) do
-    mirror? = Enum.any?(state.mirror_folders, fn(mirror_folder) ->
+    mirrored? = Enum.any?(state.mirror_folders, fn(mirror_folder) ->
       String.contains?(state.current_folder, mirror_folder)
     end)
 
-    if mirror? do
+    IO.inspect(mirrored?)
+
+    if mirrored? do
       Enum.each(state.backup_dst_folders, fn(backup_dst_folder) ->
 	{:ok, pid} =
 	  DynamicSupervisor.start_child(
