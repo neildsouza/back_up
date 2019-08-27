@@ -66,7 +66,9 @@ defmodule BackUp.Folder do
   end
 
   def handle_cast(:crawl_folder, state) do
-    delete_if_mirrored(state)
+    Task.start(fn ->
+      delete_if_mirrored(state)
+    end)
     
     case BackUp.Filesystem.crawl_folder(state.current_folder) do
       {:ok, files_folders_links} ->
