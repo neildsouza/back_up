@@ -1,5 +1,7 @@
 # BackUp
 
+First install [Elixir](https://elixir-lang.org/install.html).
+
 ## Steps to run the app
 
 1. Open the back_up/priv/backup_configs/folders.txt file
