@@ -1,13 +1,30 @@
 [from]
-/var/cache/pacman/pkg
+/home/neil
 
 [to]
-/run/media/neil/backup/arch_backup/pkg
-/run/media/neil/data/arch_backup/pkg
+/run/media/neil/backup/arch_backup
+/run/media/neil/data/arch_backup
 
 [ignore_folders]
+/home/neil/.cache
+/home/neil/.config
+/home/neil/.emacs.d/auto-save-list
+/home/neil/.kde4
 
 [ignore_files]
+/home/neil/.xsession-errors
+/home/neil/.bash_history
+/home/neil/.xsession-errors.old
+/home/neil/.Xauthority
 
 [mirror_folders]
-/var/cache/pacman/pkg
+/home/neil/programs/elixir_progs
+/home/neil/.mozilla/firefox
+/home/neil/.thunderbird
+/home/neil/programs/pointer8/code/elixir_progs
+/home/neil/programs/pointer8/code/webapi
+/home/neil/programs/pointer8/code/graph_it
+/home/neil/programs/pointer8/code/maintenances
+/home/neil/programs/pointer8/code/backend_scripts
+/home/neil/programs/pointer8/code/data_import
+/home/neil/programs/pointer8/code/lisp_progs
