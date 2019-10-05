@@ -21,6 +21,11 @@
 /home/neil/programs/elixir_progs
 /home/neil/.mozilla/firefox
 /home/neil/.thunderbird
+/home/neil/programs/android-ndk-r11c
+/home/neil/programs/android-studio
+/home/neil/programs/Android_Programs
+/home/neil/programs/Android_Programs_Flutter
+/home/neil/programs/Android_SDK
 /home/neil/programs/pointer8/code/backend_scripts
 /home/neil/programs/pointer8/code/data_import
 /home/neil/programs/pointer8/code/elixir_progs
