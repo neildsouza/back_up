@@ -18,19 +18,6 @@
 /home/neil/.Xauthority
 
 [mirror_folders]
-/home/neil/programs/elixir_progs
+/home/neil/programs
 /home/neil/.mozilla/firefox
 /home/neil/.thunderbird
-/home/neil/programs/android-ndk-r11c
-/home/neil/programs/android-studio
-/home/neil/programs/Android_Programs
-/home/neil/programs/Android_Programs_Flutter
-/home/neil/programs/Android_SDK
-/home/neil/programs/pointer8/code/backend_scripts
-/home/neil/programs/pointer8/code/data_import
-/home/neil/programs/pointer8/code/elixir_progs
-/home/neil/programs/pointer8/code/graph_it
-/home/neil/programs/pointer8/code/lisp_progs
-/home/neil/programs/pointer8/code/neo4j_current
-/home/neil/programs/pointer8/code/maintenances
-/home/neil/programs/pointer8/code/webapi
