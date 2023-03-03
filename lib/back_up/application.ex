@@ -9,11 +9,11 @@ defmodule BackUp.Application do
     # List all child processes to be supervised
     children = [
       {
-	DynamicSupervisor,
-	[
-	  strategy: :one_for_one,
-	  name: BackUp.FilesystemSup
-	]
+        DynamicSupervisor,
+        [
+          strategy: :one_for_one,
+          name: BackUp.FilesystemSup
+        ]
       },
       BackUp.AppState,
       BackUp.LinkCreationProc,

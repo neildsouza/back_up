@@ -28,24 +28,25 @@ defmodule BackUp.LinkCreationProc do
   def handle_call(:run, _, state) do
     IO.puts("Creating links")
 
-    Enum.each(state, fn({new_path, new_link_path}) ->
+    Enum.each(state, fn {new_path, new_link_path} ->
       if File.exists?(new_link_path) do
-	case File.rm(new_link_path) do
-	  :ok ->
-	    create_link(new_path, new_link_path)
+        case File.rm(new_link_path) do
+          :ok ->
+            create_link(new_path, new_link_path)
 
-	  {:error, reason} ->
-	    msg = """
-	      Msg: Cannot remove link #{new_link_path}
-	    Error: #{inspect(reason)}
-	    """
-	    IO.puts(msg)
-	end
+          {:error, reason} ->
+            msg = """
+              Msg: Cannot remove link #{new_link_path}
+            Error: #{inspect(reason)}
+            """
+
+            IO.puts(msg)
+        end
       else
-	create_link(new_path, new_link_path)
+        create_link(new_path, new_link_path)
       end
     end)
-    
+
     {:reply, :ok, state}
   end
 
@@ -57,19 +58,20 @@ defmodule BackUp.LinkCreationProc do
   defp create_link(new_path, new_link_path) do
     case File.ln_s(new_path, new_link_path) do
       :ok ->
-	msg = "Created link from #{new_link_path} to #{new_path}"
-	IO.puts(msg)
+        msg = "Created link from #{new_link_path} to #{new_path}"
+        IO.puts(msg)
 
       {:error, :eexist} ->
-	msg = "Link exists from #{new_link_path} to #{new_path}"
-	IO.puts(msg)
+        msg = "Link exists from #{new_link_path} to #{new_path}"
+        IO.puts(msg)
 
       {:error, reason} ->
-	msg = """
- 	  Msg: Cannot create link #{new_link_path}
-	Error: #{inspect(reason)}
-	"""
-	IO.puts(msg)
+        msg = """
+        	  Msg: Cannot create link #{new_link_path}
+        Error: #{inspect(reason)}
+        """
+
+        IO.puts(msg)
     end
   end
 end

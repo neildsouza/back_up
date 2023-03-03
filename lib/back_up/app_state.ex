@@ -68,9 +68,12 @@ defmodule BackUp.AppState do
 
   def handle_call({:remove_backup_folder, folder}, _, state) do
     folder = Path.split(folder) |> Path.join()
-    backup_folders = Enum.filter(state.backup_folders, fn(backup_folder) ->
-      backup_folder != folder
-    end)
+
+    backup_folders =
+      Enum.filter(state.backup_folders, fn backup_folder ->
+        backup_folder != folder
+      end)
+
     state = put_in(state.backup_folders, backup_folders)
     {:reply, state, state}
   end
@@ -82,21 +85,22 @@ defmodule BackUp.AppState do
   def handle_call({:set_backup_folder, folder}, _, state) do
     if state.start_folder != "" do
       unless String.contains?(folder, state.start_folder) do
-	folder = Path.split(folder) |> Path.join()
+        folder = Path.split(folder) |> Path.join()
 
-	unless Enum.member?(state.backup_folders, folder) do
-	  state = put_in(
-	    state,
-	    [:backup_folders],
-	    state.backup_folders ++ [folder]
-	  )
-	  
-	  {:reply, state, state}
-	else
-	  {:reply, state, state}
-	end
+        unless Enum.member?(state.backup_folders, folder) do
+          state =
+            put_in(
+              state,
+              [:backup_folders],
+              state.backup_folders ++ [folder]
+            )
+
+          {:reply, state, state}
+        else
+          {:reply, state, state}
+        end
       else
-	{:reply, "Start folder cannot contain backup folder", state}
+        {:reply, "Start folder cannot contain backup folder", state}
       end
     else
       {:reply, "Please set start folder first", state}
@@ -106,21 +110,22 @@ defmodule BackUp.AppState do
   def handle_call({:set_ignore_file, file}, _, state) do
     if state.start_folder != "" do
       if String.contains?(file, state.start_folder) do
-	file = Path.split(file) |> Path.join()
+        file = Path.split(file) |> Path.join()
 
-	unless Enum.member?(state.ignore_files, file) do
-	  state = put_in(
-	    state,
-	    [:ignore_files],
-	    state.ignore_files ++ [file]
-	  )
-	  
-	  {:reply, state, state}
-	else
-	  {:reply, state, state}
-	end
-      else	
-	{:reply, state, state}
+        unless Enum.member?(state.ignore_files, file) do
+          state =
+            put_in(
+              state,
+              [:ignore_files],
+              state.ignore_files ++ [file]
+            )
+
+          {:reply, state, state}
+        else
+          {:reply, state, state}
+        end
+      else
+        {:reply, state, state}
       end
     else
       {:reply, "Please set start folder first", state}
@@ -130,21 +135,22 @@ defmodule BackUp.AppState do
   def handle_call({:set_ignore_folder, folder}, _, state) do
     if state.start_folder != "" do
       if String.contains?(folder, state.start_folder) do
-	folder = Path.split(folder) |> Path.join()
+        folder = Path.split(folder) |> Path.join()
 
-	unless Enum.member?(state.ignore_folders, folder) do
-	  state = put_in(
-	    state,
-	    [:ignore_folders],
-	    state.ignore_folders ++ [folder]
-	  )
-	  
-	  {:reply, state, state}
-	else
-	  {:reply, state, state}
-	end
+        unless Enum.member?(state.ignore_folders, folder) do
+          state =
+            put_in(
+              state,
+              [:ignore_folders],
+              state.ignore_folders ++ [folder]
+            )
+
+          {:reply, state, state}
+        else
+          {:reply, state, state}
+        end
       else
-	{:reply, state, state}
+        {:reply, state, state}
       end
     else
       {:reply, "Please set start folder first", state}
@@ -154,21 +160,22 @@ defmodule BackUp.AppState do
   def handle_call({:set_mirror_folder, folder}, _, state) do
     if state.start_folder != "" do
       if String.contains?(folder, state.start_folder) do
-	folder = Path.split(folder) |> Path.join()
+        folder = Path.split(folder) |> Path.join()
 
-	unless Enum.member?(state.mirror_folders, folder) do
-	  state = put_in(
-	    state,
-	    [:mirror_folders],
-	    state.mirror_folders ++ [folder]
-	  )
-	  
-	  {:reply, state, state}
-	else
-	  {:reply, state, state}
-	end
+        unless Enum.member?(state.mirror_folders, folder) do
+          state =
+            put_in(
+              state,
+              [:mirror_folders],
+              state.mirror_folders ++ [folder]
+            )
+
+          {:reply, state, state}
+        else
+          {:reply, state, state}
+        end
       else
-	{:reply, state, state}
+        {:reply, state, state}
       end
     else
       {:reply, "Please set start folder first", state}
